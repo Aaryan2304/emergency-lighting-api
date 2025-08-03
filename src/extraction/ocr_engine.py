@@ -84,11 +84,6 @@ class OCREngine:
             logger.error("No OCR engines available! Text extraction will fail.")
         
         logger.info(f"OCR Engine initialized - Tesseract: {self.tesseract_available}, EasyOCR: {self.easyocr_available}")
-            self.easyocr_reader = easyocr.Reader([self.ocr_language])
-            logger.info("EasyOCR initialized successfully")
-        except Exception as e:
-            logger.warning(f"Failed to initialize EasyOCR: {e}")
-            self.easyocr_reader = None
     
     def extract_text_tesseract(self, image: np.ndarray, 
                               bbox: Optional[List[int]] = None) -> List[Dict]:
