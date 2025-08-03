@@ -3,10 +3,8 @@ FROM python:3.9-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install minimal system dependencies (no tesseract)
 RUN apt-get update && apt-get install -y \
-    tesseract-ocr \
-    tesseract-ocr-eng \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libsm6 \
@@ -14,14 +12,14 @@ RUN apt-get update && apt-get install -y \
     libxrender-dev \
     libgomp1 \
     libglu1-mesa \
-    poppler-utils \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
-COPY requirements.txt .
+COPY requirements-render.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-render.txt
 
 # Copy application code
 COPY . .
@@ -33,12 +31,12 @@ RUN mkdir -p uploads outputs debug logs
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
-# Expose port
-EXPOSE 8000
+# Expose port (Render uses port 10000)
+EXPOSE 10000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:10000/ || exit 1
 
 # Run the application
-CMD ["python", "main.py", "--mode", "api"]
+CMD ["python", "main.py", "--mode", "api", "--host", "0.0.0.0", "--port", "10000"]

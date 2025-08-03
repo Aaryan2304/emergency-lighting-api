@@ -1,0 +1,189 @@
+{
+  "total_detections": 893,
+  "symbol_counts": {
+    "A1E": 893
+  },
+  "average_confidence": 0.4203950858961935,
+  "detections": [
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1814,
+        1186,
+        1838,
+        1203
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.5640882352941177,
+      "area_size": 187.0,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1373,
+        1106,
+        1386,
+        1121
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.3431388888888889,
+      "area_size": 108.5,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1348,
+        1106,
+        1361,
+        1121
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.35138888888888886,
+      "area_size": 125.0,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        940,
+        1106,
+        951,
+        1121
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.3086944444444444,
+      "area_size": 128.5,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1568,
+        1096,
+        1590,
+        1111
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.5506388888888889,
+      "area_size": 123.5,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1511,
+        1096,
+        1547,
+        1111
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.26525,
+      "area_size": 130.5,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1445,
+        1096,
+        1475,
+        1111
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.40208333333333335,
+      "area_size": 137.5,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1409,
+        1096,
+        1437,
+        1111
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.4532777777777778,
+      "area_size": 151.0,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1158,
+        1096,
+        1178,
+        1111
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.49869444444444444,
+      "area_size": 108.5,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    },
+    {
+      "symbol": "A1E",
+      "bounding_box": [
+        1069,
+        1096,
+        1093,
+        1111
+      ],
+      "text_nearby": [
+        "EM",
+        "Exit"
+      ],
+      "confidence": 0.5559166666666666,
+      "area_size": 178.5,
+      "source_file": "EL - 501.png",
+      "source_page": 1,
+      "source_sheet": "Sheet_1"
+    }
+  ]
+}
