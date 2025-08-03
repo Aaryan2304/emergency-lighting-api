@@ -242,6 +242,28 @@ Get a free Google Gemini API key from [Google AI Studio](https://aistudio.google
 - **Status Tracking**: Monitor processing progress
 - **Result Storage**: Store results in database for retrieval
 
+## 🔄 Background Processing Details
+
+The API implements robust background processing to handle PDF analysis without blocking the client:
+
+1. **Upload Phase**: 
+   - PDF is uploaded via POST `/api/v1/blueprints/upload`
+   - File is stored and processing record created in SQLite database
+   - Background task is immediately started
+   - Client receives instant response with PDF name for tracking
+
+2. **Processing Phase**:
+   - PDF converted to images using multiple fallback libraries
+   - Computer vision detection runs on each page
+   - OCR extracts text from detected areas
+   - LLM processes and groups fixtures intelligently
+
+3. **Result Storage & Retrieval**:
+   - Final results stored in database with PDF association
+   - Client polls GET `/api/v1/blueprints/result?pdf_name=filename.pdf`
+   - API returns status: "in_progress" or "complete" with results
+   - Results persist for future retrieval
+
 ## 🧪 Testing
 
 Run the test suite:
