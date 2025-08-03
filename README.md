@@ -371,6 +371,7 @@ python -m pytest tests/ --cov=src
 4. **Deploy**
    - Render will automatically build and deploy
    - Monitor build logs for any issues
+   - Uses memory-optimized configuration (Tesseract only) for free tier
    - Your API will be available at: `https://your-service-name.onrender.com`
 
 #### Testing Your Deployed API
@@ -399,9 +400,10 @@ python -m pytest tests/ --cov=src
 
 #### Troubleshooting
 
-- **Build fails**: Check dependencies in `requirements-render.txt`
+- **Build fails**: Check dependencies in `requirements-render-minimal.txt`
+- **Out of memory**: Uses Tesseract-only for memory efficiency on free tier
 - **Timeout**: Processing large PDFs may take 60-90 seconds
-- **Memory issues**: Uses optimized `opencv-python-headless`
+- **Memory issues**: EasyOCR disabled on Render to prevent out-of-memory errors
 - **Port issues**: API automatically runs on port 10000 for Render
 
 ### Docker Deployment
