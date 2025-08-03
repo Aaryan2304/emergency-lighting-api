@@ -1,0 +1,178 @@
+{
+  "info": {
+    "name": "Emergency Lighting Detection API",
+    "description": "API for detecting and grouping emergency lighting fixtures from construction blueprints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://your-service-name.onrender.com",
+      "description": "Base URL for the API (update with your Render URL)"
+    },
+    {
+      "key": "localUrl",
+      "value": "http://localhost:8000",
+      "description": "Local development URL"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Check if the API is running"
+      }
+    },
+    {
+      "name": "Upload Blueprint",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "",
+              "description": "PDF file to upload"
+            },
+            {
+              "key": "project_id",
+              "value": "test-project",
+              "type": "text",
+              "description": "Optional project ID"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/blueprints/upload",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "blueprints",
+            "upload"
+          ]
+        },
+        "description": "Upload a PDF blueprint for processing"
+      }
+    },
+    {
+      "name": "Get Processing Result",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/blueprints/result?pdf_name=E2.4.pdf&detailed=false",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "blueprints",
+            "result"
+          ],
+          "query": [
+            {
+              "key": "pdf_name",
+              "value": "E2.4.pdf",
+              "description": "Name of the uploaded PDF (with extension)"
+            },
+            {
+              "key": "detailed",
+              "value": "false",
+              "description": "Whether to include detailed detection information"
+            }
+          ]
+        },
+        "description": "Get processing results for a specific PDF"
+      }
+    },
+    {
+      "name": "Get Detailed Result",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/blueprints/result/detailed?pdf_name=E2.4.pdf",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "blueprints",
+            "result",
+            "detailed"
+          ],
+          "query": [
+            {
+              "key": "pdf_name",
+              "value": "E2.4.pdf",
+              "description": "Name of the uploaded PDF"
+            }
+          ]
+        },
+        "description": "Get detailed processing results with detection information"
+      }
+    },
+    {
+      "name": "List All Blueprints",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/blueprints/list?limit=10&offset=0",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "blueprints",
+            "list"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "Maximum number of results"
+            },
+            {
+              "key": "offset",
+              "value": "0",
+              "description": "Number of results to skip"
+            }
+          ]
+        },
+        "description": "List all processed blueprints"
+      }
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
