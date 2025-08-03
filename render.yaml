@@ -3,7 +3,7 @@ services:
     name: emergency-lighting-api
     env: python
     plan: free
-    buildCommand: "pip install -r requirements-render.txt"
+    buildCommand: "apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-eng poppler-utils && pip install -r requirements-render.txt"
     startCommand: python main.py --mode api
     envVars:
       - key: PYTHONPATH
