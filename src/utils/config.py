@@ -63,7 +63,7 @@ class Config:
     
     # OCR Configuration
     TESSERACT_CONFIG: str = os.getenv('TESSERACT_CONFIG', '--oem 3 --psm 6')
-    OCR_LANGUAGE: str = os.getenv('OCR_LANGUAGE', 'eng')
+    OCR_LANGUAGE: str = os.getenv('OCR_LANGUAGE', 'en')  # EasyOCR uses 'en' not 'eng'
     
     # Computer Vision Configuration
     MIN_CONTOUR_AREA: int = int(os.getenv('MIN_CONTOUR_AREA', '100'))

@@ -87,8 +87,13 @@ def main():
                 logger.error("Failed to initialize system")
                 sys.exit(1)
             
+            # Update config with args
+            config.API_HOST = args.host
+            config.API_PORT = args.port
+            config.DEBUG = args.debug
+            
             # Start API server
-            api_main(host=args.host, port=args.port, debug=args.debug)
+            api_main()
             
         elif args.mode == 'pipeline':
             logger.info("Starting pipeline mode")
