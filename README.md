@@ -1,23 +1,31 @@
-# Emergency Lighting Detection from Construction Blueprints
+# Emergency Lighting Detection API
 
-## 🎯 Project Overview
+## 🎯 Overview
 
-This project implements an AI Vision pipeline that extracts Emergency Lighting Fixtures from electrical drawings and prepares structured grouped outputs using LLMs. The system can detect emergency lights shown as shaded rectangular areas on layout drawings and extract associated metadata.
+An AI-powered REST API that automatically detects and categorizes emergency lighting fixtures from electrical construction blueprints. The system uses computer vision, OCR, and Large Language Models to identify emergency lights shown as shaded rectangular areas and extract their specifications.
 
-## 📋 Features
+## ✨ Key Features
 
-- **Computer Vision Detection**: Detect emergency lighting fixtures in electrical drawings
-- **OCR Text Extraction**: Extract symbols, descriptions, and nearby text
-- **LLM-Powered Grouping**: Use Large Language Models to classify and group lighting fixtures
-- **REST API**: Upload PDFs and retrieve processed results
-- **Background Processing**: Asynchronous processing with status tracking
-- **Database Storage**: Store extracted data with PDF associations
+- **🔍 Computer Vision Detection**: Automatically detects emergency lighting fixtures in PDF blueprints
+- **📝 OCR Text Extraction**: Extracts fixture symbols, descriptions, and nearby text
+- **🤖 AI-Powered Grouping**: Uses LLMs to intelligently classify and group lighting fixtures
+- **🚀 REST API**: Simple upload/retrieve endpoints with background processing
+- **⚡ Async Processing**: Non-blocking background processing with status tracking
+- **💾 Database Storage**: Persistent storage of results with PDF associations
+- **🏗 Multiple LLM Support**: Google Gemini, Ollama, Hugging Face, OpenAI backends
+- **☁️ Cloud Ready**: Configured for Render.com deployment with Docker support
 
 ## 🏗 Project Structure
 
 ```
-ocr/
+emergency-lighting-api/
 ├── src/
+│   ├── api/
+│   │   ├── app.py                   # FastAPI application
+│   │   ├── routes.py                # API route definitions
+│   │   └── models.py                # Pydantic models
+│   ├── core/
+│   │   └── pipeline.py              # Main processing pipeline
 │   ├── detection/
 │   │   ├── lighting_detector.py      # Main detection logic
 │   │   ├── image_processor.py        # Image preprocessing
@@ -28,25 +36,29 @@ ocr/
 │   │   └── text_processor.py        # Text preprocessing and cleaning
 │   ├── llm/
 │   │   ├── grouping_engine.py       # LLM-based grouping logic
+│   │   ├── llm_backends.py          # Multiple LLM backend support
 │   │   └── prompt_templates.py      # LLM prompt templates
-│   ├── api/
-│   │   ├── app.py                   # FastAPI application
-│   │   ├── routes.py                # API route definitions
-│   │   └── models.py                # Pydantic models
 │   ├── database/
 │   │   ├── db_manager.py            # Database operations
-│   │   └── models.py                # Database models
+│   │   ├── models.py                # Database models
+│   │   └── init_db.py               # Database initialization
 │   └── utils/
 │       ├── config.py                # Configuration settings
 │       ├── logger.py                # Logging utilities
 │       └── file_handler.py          # File operations
-├── data/                            # Dataset folder
-├── models/                          # Trained models
+├── data/                            # Sample images and test data
 ├── tests/                           # Unit tests
+├── postman/                         # Postman collection for API testing
+├── outputs/                         # Generated annotations and results
+├── logs/                            # Application logs
 ├── requirements.txt                 # Python dependencies
+├── requirements-render.txt          # Optimized dependencies for Render
+├── render.yaml                      # Render deployment configuration
 ├── docker-compose.yml              # Docker configuration
-├── postman/                        # Postman collection
-└── README.md                       # This file
+├── setup.py                        # Interactive setup script
+├── main.py                         # Application entry point
+├── create_annotation.py            # Annotation generation utility
+└── README.md                       # This documentation
 ```
 
 ## 🚀 Quick Start
@@ -329,54 +341,82 @@ python -m pytest tests/ --cov=src
 
 ### Render.com Deployment (Recommended)
 
+#### Setup Requirements
+
+- [x] GitHub repository with your code
+- [x] Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+- [x] `render.yaml` configuration file (included)
+
+#### Step-by-Step Guide
+
 1. **Push code to GitHub**
+
    ```bash
    git add .
-   git commit -m "Prepare for Render deployment"
+   git commit -m "Deploy to Render"
    git push origin main
    ```
 
-2. **Connect to Render**
+2. **Create Render Service**
    - Go to [render.com](https://render.com) and sign up
-   - Connect your GitHub repository
-   - Choose "Blueprint" deployment
-   - Select your repository with `render.yaml`
+   - Click "New" → "Blueprint"
+   - Connect your GitHub account
+   - Select your repository
 
-3. **Set Environment Variables**
-   - In Render dashboard, set:
-     - `GEMINI_API_KEY`: Your Google Gemini API key
-     - `API_PORT`: `10000` (Render default)
-     - Other variables are set in `render.yaml`
+3. **Configure Environment Variables**
+   In Render dashboard, set:
+   - `GEMINI_API_KEY`: Your Google Gemini API key
+   - Other variables are automatically configured in `render.yaml`
 
 4. **Deploy**
    - Render will automatically build and deploy
+   - Monitor build logs for any issues
    - Your API will be available at: `https://your-service-name.onrender.com`
 
-5. **Test Deployment**
+#### Testing Your Deployed API
+
+1. **Health Check**
+
    ```bash
-   # Test endpoints
    GET https://your-service-name.onrender.com/health
-   POST https://your-service-name.onrender.com/api/v1/blueprints/upload
-   GET https://your-service-name.onrender.com/api/v1/blueprints/result?pdf_name=...
+   # Expected: {"status": "healthy", "service": "emergency-lighting-api"}
    ```
+
+2. **Upload Blueprint**
+
+   ```bash
+   POST https://your-service-name.onrender.com/blueprints/upload
+   # Body: multipart/form-data with PDF file
+   # Expected: {"status": "uploaded", "pdf_name": "...", "message": "Processing started in background."}
+   ```
+
+3. **Get Results**
+
+   ```bash
+   GET https://your-service-name.onrender.com/blueprints/result?pdf_name=yourfile.pdf
+   # Expected: Grouped lighting fixture results
+   ```
+
+#### Troubleshooting
+
+- **Build fails**: Check dependencies in `requirements-render.txt`
+- **Timeout**: Processing large PDFs may take 60-90 seconds
+- **Memory issues**: Uses optimized `opencv-python-headless`
+- **Port issues**: API automatically runs on port 10000 for Render
 
 ### Docker Deployment
 
 1. **Build the image**
+
    ```bash
    docker build -t emergency-lighting-detector .
    ```
 
 2. **Run with docker-compose**
+
    ```bash
    docker-compose up -d
    ```
-
-### Render.com Deployment
-
-1. **Connect your GitHub repository to Render**
-2. **Set environment variables in Render dashboard**
-3. **Deploy using the provided `render.yaml`**
 
 ## 📊 Model Performance
 
@@ -387,14 +427,26 @@ python -m pytest tests/ --cov=src
 | Classification F1-Score | 92.1% |
 | Processing Time (avg) | 45 seconds |
 
-## 🔍 Debugging
+## 🔍 Debugging & Monitoring
 
-The system outputs intermediate JSONs for debugging:
+The system provides comprehensive logging and debugging capabilities:
 
-1. **Detection Results**: `debug/detection_results.json`
-2. **OCR Output**: `debug/ocr_output.json`
-3. **LLM Input**: `debug/llm_input.json`
-4. **Final Results**: `debug/final_results.json`
+- **Application Logs**: Check `logs/app.log` for detailed processing information
+- **API Endpoints**: Use `/health` endpoint to verify service status
+- **Processing Status**: Monitor background task progress via status endpoint
+- **Error Handling**: Comprehensive error messages for troubleshooting
+
+For development debugging, the system can output intermediate processing results when DEBUG mode is enabled.
+
+## 📋 Submission Deliverables
+
+This project includes all required deliverables:
+
+1. **✅ Annotated Screenshot**: Emergency lighting detection with bounding boxes (`outputs/submission_annotation.png`)
+2. **✅ Hosted API**: Deployed on Render.com with upload and result endpoints
+3. **✅ Postman Collection**: Ready-to-use API testing collection (`postman/Emergency-Lighting-API.postman_collection.json`)
+4. **✅ GitHub Repository**: Complete source code with comprehensive documentation
+5. **✅ Demo Video**: 2-minute walkthrough of the detection process and API functionality
 
 ## 🤝 Contributing
 
