@@ -174,6 +174,8 @@ class ProcessingPipeline:
             )
             
             if not images:
+                # Log the issue but let the image_processor handle fallbacks
+                logger.warning("Initial PDF conversion returned no images, image processor should have tried fallbacks")
                 raise ValueError("No pages found in PDF")
             
             # Resize images if too large

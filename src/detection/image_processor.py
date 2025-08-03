@@ -99,6 +99,16 @@ class ImageProcessor:
             List of PIL Images
         """
         try:
+            # Basic file validation first
+            if not os.path.exists(pdf_path):
+                raise FileNotFoundError(f"PDF file not found: {pdf_path}")
+            
+            file_size = os.path.getsize(pdf_path)
+            logger.info(f"Processing PDF: {pdf_path} (size: {file_size} bytes)")
+            
+            if file_size == 0:
+                raise ValueError("PDF file is empty")
+            
             # Set Poppler path for different environments
             poppler_path = None
             
@@ -185,9 +195,11 @@ class ImageProcessor:
                     logger.error(f"All PDF conversion attempts failed: {str(e3)}")
                     
                     # Final fallback: try PyMuPDF if available
-                    if PYMUPDF_AVAILABLE:
-                        logger.info("Trying PyMuPDF as final fallback...")
+                    logger.info("Trying PyMuPDF as final fallback...")
+                    try:
                         return self._convert_pdf_with_pymupdf(pdf_path)
+                    except Exception as pymupdf_error:
+                        logger.error(f"PyMuPDF fallback also failed: {pymupdf_error}")
                     
                     return []
 
@@ -201,13 +213,19 @@ class ImageProcessor:
         Returns:
             List of PIL Images
         """
-        if not PYMUPDF_AVAILABLE:
-            logger.error("PyMuPDF not available")
+        try:
+            # Try to import fitz dynamically
+            import fitz  # PyMuPDF
+            logger.info("PyMuPDF (fitz) imported successfully")
+        except ImportError:
+            logger.error("PyMuPDF (fitz) not available - install with 'pip install PyMuPDF'")
             return []
             
         try:
             doc = fitz.open(pdf_path)
             images = []
+            
+            logger.info(f"PyMuPDF opened PDF with {len(doc)} pages")
             
             for page_num in range(len(doc)):
                 page = doc[page_num]

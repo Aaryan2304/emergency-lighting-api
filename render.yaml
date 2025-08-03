@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: "apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-eng poppler-utils poppler-data libpoppler-cpp-dev && which pdftoppm && pdftoppm -v && pip install --upgrade pip && pip install -r requirements-render-minimal.txt"
-    startCommand: python debug_poppler.py && python main.py --mode api
+    startCommand: python main.py --mode api
     envVars:
       - key: PYTHONPATH
         value: /opt/render/project/src
