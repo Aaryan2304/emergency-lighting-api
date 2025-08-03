@@ -7,6 +7,8 @@ import cv2
 import numpy as np
 from typing import Tuple, Optional
 import logging
+import os
+import platform
 from pdf2image import convert_from_path
 from PIL import Image
 
@@ -88,12 +90,58 @@ class ImageProcessor:
             List of PIL Images
         """
         try:
-            images = convert_from_path(pdf_path, dpi=dpi)
+            # Set Poppler path for different environments
+            poppler_path = None
+            
+            # For Render/Linux environments, try common Poppler locations
+            if platform.system() == "Linux" or os.getenv('RENDER'):
+                common_paths = [
+                    "/usr/bin",
+                    "/usr/local/bin", 
+                    "/opt/poppler/bin"
+                ]
+                
+                for path in common_paths:
+                    if os.path.exists(os.path.join(path, "pdftoppm")):
+                        poppler_path = path
+                        logger.info(f"Found Poppler at: {poppler_path}")
+                        break
+                        
+                if not poppler_path:
+                    logger.warning("Poppler path not found, using system PATH")
+            
+            # Convert PDF with or without explicit Poppler path
+            if poppler_path:
+                images = convert_from_path(pdf_path, dpi=dpi, poppler_path=poppler_path)
+            else:
+                images = convert_from_path(pdf_path, dpi=dpi)
+                
+            if not images:
+                raise Exception("No pages found in PDF")
+                
             logger.info(f"Converted PDF to {len(images)} pages")
             return images
+            
         except Exception as e:
             logger.error(f"Error converting PDF to images: {str(e)}")
-            return []
+            
+            # Try alternative approach without DPI specification
+            try:
+                logger.info("Retrying PDF conversion with default settings...")
+                if poppler_path:
+                    images = convert_from_path(pdf_path, poppler_path=poppler_path)
+                else:
+                    images = convert_from_path(pdf_path)
+                    
+                if images:
+                    logger.info(f"Alternative conversion successful: {len(images)} pages")
+                    return images
+                else:
+                    raise Exception("No pages found in PDF")
+                    
+            except Exception as e2:
+                logger.error(f"Alternative PDF conversion also failed: {str(e2)}")
+                return []
     
     def pil_to_cv2(self, pil_image: Image.Image) -> np.ndarray:
         """
