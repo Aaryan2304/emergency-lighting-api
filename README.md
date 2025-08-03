@@ -64,7 +64,8 @@ emergency-lighting-api/
 ├── postman/                         # Postman collection for API testing
 ├── outputs/                         # Generated annotations and results
 ├── logs/                            # Application logs
-├── requirements.txt                 # Python dependencies (unified for all environments)
+├── requirements.txt                 # Python dependencies
+├── requirements-render.txt          # Optimized dependencies for Render
 ├── render.yaml                      # Render deployment configuration
 ├── docker-compose.yml              # Docker configuration
 ├── setup.py                        # Interactive setup script
@@ -116,8 +117,6 @@ If you want to run the API locally for development:
    ```bash
    pip install -r requirements.txt
    ```
-   
-   **Note**: The `requirements.txt` file includes optional dependencies commented out for memory-constrained deployments. Uncomment specific packages if needed for local development.
 
 4. **Set up environment variables**
    Create a `.env` file with:
