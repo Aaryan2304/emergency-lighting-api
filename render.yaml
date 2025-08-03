@@ -24,7 +24,3 @@ services:
         generateValue: true  # Set this in Render dashboard
       - key: DEBUG
         value: "false"
-    disk:
-      name: emergency-lighting-disk
-      mountPath: /opt/render/project/data
-      sizeGB: 1
