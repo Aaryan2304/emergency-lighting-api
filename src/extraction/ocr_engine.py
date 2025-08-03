@@ -36,8 +36,6 @@ logger = logging.getLogger(__name__)
 TESSERACT_AVAILABLE = False
 
 if PYTESSERACT_AVAILABLE and pytesseract:
-
-if PYTESSERACT_AVAILABLE and pytesseract:
     # Configure Tesseract path for Windows
     if platform.system() == "Windows":
         # Use the confirmed working path
