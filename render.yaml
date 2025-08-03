@@ -3,7 +3,7 @@ services:
     name: emergency-lighting-api
     env: python
     plan: free
-    buildCommand: "apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-eng poppler-utils && pip install --upgrade pip && pip install -r requirements-render.txt"
+    buildCommand: "apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-eng poppler-utils && pip install --upgrade pip && pip install -r requirements-render-minimal.txt"
     startCommand: python main.py --mode api
     envVars:
       - key: PYTHONPATH
@@ -24,3 +24,7 @@ services:
         generateValue: true  # Set this in Render dashboard
       - key: DEBUG
         value: "false"
+      - key: DISABLE_EASYOCR
+        value: "true"
+      - key: RENDER
+        value: "true"

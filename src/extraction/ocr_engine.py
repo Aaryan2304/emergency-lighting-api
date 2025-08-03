@@ -64,17 +64,19 @@ class OCREngine:
         self.ocr_language = config.OCR_LANGUAGE
         self.tesseract_available = TESSERACT_AVAILABLE
         
-        # Initialize EasyOCR reader
-        self.easyocr_available = EASYOCR_AVAILABLE
+        # Lazy initialization for EasyOCR to avoid memory issues on Render
+        self.easyocr_available = EASYOCR_AVAILABLE and not os.getenv('DISABLE_EASYOCR')
         self.easyocr_reader = None
+        self._easyocr_initialized = False
         
-        if EASYOCR_AVAILABLE and easyocr:
-            try:
-                self.easyocr_reader = easyocr.Reader([self.ocr_language])
-                logger.info("EasyOCR reader initialized successfully")
-            except Exception as e:
-                logger.error(f"Failed to initialize EasyOCR reader: {e}")
-                self.easyocr_available = False
+        # Check if running on Render (limited memory)
+        self.is_render = os.getenv('RENDER') is not None or os.getenv('NODE_ENV') == 'production'
+        
+        # Don't initialize EasyOCR immediately if on Render
+        if not self.is_render and EASYOCR_AVAILABLE and easyocr:
+            self._initialize_easyocr()
+        elif self.is_render:
+            logger.info("Running on Render - EasyOCR will be initialized on demand to save memory")
         else:
             logger.warning("EasyOCR not available")
             self.easyocr_available = False
@@ -84,6 +86,24 @@ class OCREngine:
             logger.error("No OCR engines available! Text extraction will fail.")
         
         logger.info(f"OCR Engine initialized - Tesseract: {self.tesseract_available}, EasyOCR: {self.easyocr_available}")
+    
+    def _initialize_easyocr(self):
+        """Initialize EasyOCR reader on demand."""
+        if self._easyocr_initialized:
+            return
+            
+        try:
+            if EASYOCR_AVAILABLE and easyocr:
+                logger.info("Initializing EasyOCR reader...")
+                self.easyocr_reader = easyocr.Reader([self.ocr_language])
+                self._easyocr_initialized = True
+                logger.info("EasyOCR reader initialized successfully")
+            else:
+                self.easyocr_available = False
+                logger.warning("EasyOCR not available")
+        except Exception as e:
+            logger.error(f"Failed to initialize EasyOCR reader: {e}")
+            self.easyocr_available = False
     
     def extract_text_tesseract(self, image: np.ndarray, 
                               bbox: Optional[List[int]] = None) -> List[Dict]:
@@ -156,6 +176,10 @@ class OCREngine:
         Returns:
             List of text detections with bounding boxes
         """
+        # Initialize EasyOCR on demand
+        if not self._easyocr_initialized and self.easyocr_available:
+            self._initialize_easyocr()
+        
         if not self.easyocr_reader:
             logger.warning("EasyOCR not available, returning empty results")
             return []
