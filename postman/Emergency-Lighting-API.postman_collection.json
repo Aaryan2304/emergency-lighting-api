@@ -6,9 +6,9 @@
   },
   "variable": [
     {
-      "key": "baseUrl",
-      "value": "https://your-service-name.onrender.com",
-      "description": "Base URL for the API (update with your Render URL)"
+      "key": "baseUrl", 
+      "value": "https://emergency-lighting-api.onrender.com",
+      "description": "Live API URL on Render.com"
     },
     {
       "key": "localUrl",
