@@ -79,8 +79,9 @@
 - Have backup plan if API is slow (mention "processing in background")
 
 ## 🚀 **Sample Files to Use:**
-- Use any PDF from your `data/` folder for demonstration
-- The API should work with any of: EL-501.png, L-102.png, P-102.png etc.
+- Use `data/PDF.pdf` for PDF demonstration (this is the actual PDF file)
+- Alternative: Use any image from `data/` folder (EL-501.png, L-102.png, P-102.png etc.)
+- Note: Most files in data/ are PNG images, but the API accepts both PDF and image formats
 - If PDF processing fails due to hosting limitations, mention this is expected on free tier
 
 ## 📤 **Upload Requirements:**
