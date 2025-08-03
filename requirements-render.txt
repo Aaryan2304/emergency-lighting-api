@@ -8,6 +8,9 @@ pydantic>=2.5.0
 python-dotenv>=1.0.0
 aiosqlite>=0.17.0
 
+# Data processing
+pandas>=2.0.0
+
 # Computer Vision and Image Processing
 opencv-python-headless>=4.8.1.78  # Headless version for server deployment
 numpy>=1.25.2
