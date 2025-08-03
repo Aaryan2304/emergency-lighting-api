@@ -98,8 +98,22 @@ class ImageProcessor:
                 common_paths = [
                     "/usr/bin",
                     "/usr/local/bin", 
-                    "/opt/poppler/bin"
+                    "/opt/poppler/bin",
+                    "/bin"
                 ]
+                
+                # Also try to find pdftoppm using which command
+                try:
+                    import subprocess
+                    result = subprocess.run(["which", "pdftoppm"], 
+                                          capture_output=True, text=True, timeout=5)
+                    if result.returncode == 0 and result.stdout.strip():
+                        which_path = os.path.dirname(result.stdout.strip())
+                        if which_path not in common_paths:
+                            common_paths.insert(0, which_path)
+                        logger.info(f"Found pdftoppm via which: {result.stdout.strip()}")
+                except Exception as e:
+                    logger.debug(f"Could not use 'which' command: {e}")
                 
                 for path in common_paths:
                     if os.path.exists(os.path.join(path, "pdftoppm")):
@@ -141,7 +155,26 @@ class ImageProcessor:
                     
             except Exception as e2:
                 logger.error(f"Alternative PDF conversion also failed: {str(e2)}")
-                return []
+                
+                # Final attempt: try with minimal parameters and explicit PATH
+                try:
+                    logger.info("Final attempt: minimal conversion settings...")
+                    # Try setting PATH explicitly
+                    old_path = os.environ.get('PATH', '')
+                    if '/usr/bin' not in old_path:
+                        os.environ['PATH'] = f"/usr/bin:{old_path}"
+                    
+                    images = convert_from_path(pdf_path, dpi=72, first_page=1, last_page=10)
+                    
+                    if images:
+                        logger.info(f"Minimal conversion successful: {len(images)} pages")
+                        return images
+                    else:
+                        raise Exception("Still no pages found")
+                        
+                except Exception as e3:
+                    logger.error(f"All PDF conversion attempts failed: {str(e3)}")
+                    return []
     
     def pil_to_cv2(self, pil_image: Image.Image) -> np.ndarray:
         """
