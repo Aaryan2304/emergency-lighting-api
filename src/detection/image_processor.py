@@ -9,8 +9,17 @@ from typing import Tuple, Optional
 import logging
 import os
 import platform
+import io
 from pdf2image import convert_from_path
 from PIL import Image
+
+# Try to import PyMuPDF as a fallback
+try:
+    import fitz  # PyMuPDF
+    PYMUPDF_AVAILABLE = True
+except ImportError:
+    PYMUPDF_AVAILABLE = False
+    fitz = None
 
 from ..utils.config import Config
 
@@ -174,7 +183,50 @@ class ImageProcessor:
                         
                 except Exception as e3:
                     logger.error(f"All PDF conversion attempts failed: {str(e3)}")
+                    
+                    # Final fallback: try PyMuPDF if available
+                    if PYMUPDF_AVAILABLE:
+                        logger.info("Trying PyMuPDF as final fallback...")
+                        return self._convert_pdf_with_pymupdf(pdf_path)
+                    
                     return []
+
+    def _convert_pdf_with_pymupdf(self, pdf_path: str) -> list:
+        """
+        Convert PDF to images using PyMuPDF (fallback method).
+        
+        Args:
+            pdf_path: Path to PDF file
+            
+        Returns:
+            List of PIL Images
+        """
+        if not PYMUPDF_AVAILABLE:
+            logger.error("PyMuPDF not available")
+            return []
+            
+        try:
+            doc = fitz.open(pdf_path)
+            images = []
+            
+            for page_num in range(len(doc)):
+                page = doc[page_num]
+                # Get the page as a pixmap (image)
+                mat = fitz.Matrix(1.5, 1.5)  # Zoom factor for better quality
+                pix = page.get_pixmap(matrix=mat)
+                
+                # Convert to PIL Image
+                img_data = pix.tobytes("ppm")
+                pil_image = Image.open(io.BytesIO(img_data))
+                images.append(pil_image)
+                
+            doc.close()
+            logger.info(f"PyMuPDF converted PDF to {len(images)} pages")
+            return images
+            
+        except Exception as e:
+            logger.error(f"PyMuPDF conversion failed: {str(e)}")
+            return []
     
     def pil_to_cv2(self, pil_image: Image.Image) -> np.ndarray:
         """
