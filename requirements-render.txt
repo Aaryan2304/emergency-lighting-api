@@ -13,7 +13,10 @@ opencv-python-headless>=4.8.1.78  # Headless version for server deployment
 numpy>=1.25.2
 pillow>=10.1.0
 pdf2image>=1.16.3
-easyocr>=1.7.0  # Use EasyOCR instead of pytesseract for Render deployment
+
+# OCR engines
+pytesseract>=0.3.10
+easyocr>=1.7.0
 
 # HTTP requests
 requests>=2.31.0
@@ -21,7 +24,6 @@ requests>=2.31.0
 # LLM Backend - Google Gemini (free tier)
 google-generativeai>=0.3.2
 
-# Testing (optional)
+# Testing (optional for production)
 pytest>=7.4.3
 pytest-asyncio>=0.21.1
-pytest-cov>=4.1.0

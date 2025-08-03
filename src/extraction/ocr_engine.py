@@ -5,13 +5,28 @@ Supports multiple OCR backends and text preprocessing.
 
 import cv2
 import numpy as np
-import pytesseract
-import easyocr
 from typing import List, Dict, Optional, Tuple
 import logging
 import re
 import os
 import platform
+
+# Import OCR libraries with error handling
+try:
+    import pytesseract
+    PYTESSERACT_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"pytesseract not available: {e}")
+    PYTESSERACT_AVAILABLE = False
+    pytesseract = None
+
+try:
+    import easyocr
+    EASYOCR_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"easyocr not available: {e}")
+    EASYOCR_AVAILABLE = False
+    easyocr = None
 
 from ..utils.config import Config
 
@@ -20,19 +35,25 @@ logger = logging.getLogger(__name__)
 # Check Tesseract availability
 TESSERACT_AVAILABLE = False
 
-# Configure Tesseract path for Windows
-if platform.system() == "Windows":
-    # Use the confirmed working path
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    logger.info(f"Set Tesseract path to: {pytesseract.pytesseract.tesseract_cmd}")
+if PYTESSERACT_AVAILABLE and pytesseract:
 
-# Verify Tesseract is accessible
-try:
-    version = pytesseract.get_tesseract_version()
-    logger.info(f"Tesseract version: {version}")
-    TESSERACT_AVAILABLE = True
-except Exception as e:
-    logger.warning(f"Tesseract not accessible, will use EasyOCR only: {e}")
+if PYTESSERACT_AVAILABLE and pytesseract:
+    # Configure Tesseract path for Windows
+    if platform.system() == "Windows":
+        # Use the confirmed working path
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        logger.info(f"Set Tesseract path to: {pytesseract.pytesseract.tesseract_cmd}")
+
+    # Verify Tesseract is accessible
+    try:
+        version = pytesseract.get_tesseract_version()
+        logger.info(f"Tesseract version: {version}")
+        TESSERACT_AVAILABLE = True
+    except Exception as e:
+        logger.warning(f"Tesseract not accessible, will use EasyOCR only: {e}")
+        TESSERACT_AVAILABLE = False
+else:
+    logger.warning("pytesseract module not available, will use EasyOCR only")
     TESSERACT_AVAILABLE = False
 
 
@@ -46,7 +67,25 @@ class OCREngine:
         self.tesseract_available = TESSERACT_AVAILABLE
         
         # Initialize EasyOCR reader
-        try:
+        self.easyocr_available = EASYOCR_AVAILABLE
+        self.easyocr_reader = None
+        
+        if EASYOCR_AVAILABLE and easyocr:
+            try:
+                self.easyocr_reader = easyocr.Reader([self.ocr_language])
+                logger.info("EasyOCR reader initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize EasyOCR reader: {e}")
+                self.easyocr_available = False
+        else:
+            logger.warning("EasyOCR not available")
+            self.easyocr_available = False
+        
+        # Check if at least one OCR engine is available
+        if not self.tesseract_available and not self.easyocr_available:
+            logger.error("No OCR engines available! Text extraction will fail.")
+        
+        logger.info(f"OCR Engine initialized - Tesseract: {self.tesseract_available}, EasyOCR: {self.easyocr_available}")
             self.easyocr_reader = easyocr.Reader([self.ocr_language])
             logger.info("EasyOCR initialized successfully")
         except Exception as e:
