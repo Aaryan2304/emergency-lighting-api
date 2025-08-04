@@ -355,7 +355,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-**Project Author**: Aaryan Patel  
+**Project Author**: Aaryan Kurade  
 **GitHub**: [Aaryan2304](https://github.com/Aaryan2304)  
 **Repository**: [emergency-lighting-api](https://github.com/Aaryan2304/emergency-lighting-api)  
 **Live API**: [emergency-lighting-api.onrender.com](https://emergency-lighting-api.onrender.com)
